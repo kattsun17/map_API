@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <title>設置サンプル</title>
+    <link rel="stylesheet" type="text/css" href="css/gmapv3.css" />
+    <style>
+        #map_canvas { width:100%; height:100%; margin:0; padding:0; }
+        .infowin {
+            background:#000;
+            color:#fff;
+            padding:5px;
+            margin-bottom:20%;
+            margin-top:5px;
+        }
+        .infowin iframe {
+            display:block;
+            margin:0 auto; padding:0;
+            box-sizing:border-box;
+        }
+        .infowin p {
+            margin:5px; padding:0;
+        }
+    </style>
+    <!-- Google Maps APIの読み込み -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
+    <script src="./lib/gmapv3/infobox.js"></script>
+    <script>
+        var map;
+        /* ページ読み込み時に地図を初期化 */
+        $(function(){
+            initialize();
+        });
+        var openFlag=new Array();
+        var overlays=new Array();
+
+        /* 地図の初期化 */
+        function initialize() {
+            /* 緯度・経度：スカイツリー */
+            var point=new google.maps.LatLng(35.710139,139.810833);
+            /* 地図のオプション設定 */
+            var mapOptions={
+                /*初期のズーム レベル */
+                zoom:12,
+                /* 地図の中心点 */
+                center:point,
+                /* 地図タイプ */
+                 mapTypeId:google.maps.MapTypeId.ROADMAP,
+                   styles:[{elementType:'all'}]
+            };
+            /* 地図オブジェクト */
+            map=new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+            /* マーカー画像 */
+            var image=new google.maps.MarkerImage("img/ajax/gmapv3/infowindow/marker_skytree.png",
+                new google.maps.Size(44.0, 200.0),
+                new google.maps.Point(0, 0),
+                new google.maps.Point(22.0, 100.0)
+            );
+            /* マーカーの影画像 */
+            var shadow=new google.maps.MarkerImage("img/ajax/gmapv3/infowindow/marker_skytree_shadow.png",
+                new google.maps.Size(145.0, 200.0),
+                new google.maps.Point(0, 0),
+                new google.maps.Point(22.0, 100.0)
+            );
+            /* マーカー */
+            var marker=new google.maps.Marker({
+                position: point,
+                map: map,
+                title:"とうきょうスカイツリー",
+                icon:image,
+                shadow:shadow
+            });
+            var s="";
+            s+='<iframe width="560" height="315" src="https://www.youtube.com/embed/xMLJf_YqRCU?rel=0&autohide=1" frameborder="0" allowfullscreen></iframe>';
+            s+="<p>節電中とかで前半分だけのライトアップ。夜空にそびえたつ白い巨塔はとっても幻想的で­した。</p>";
+            s+="<p><a href='https://www.youtube.com/watch?v=xMLJf_YqRCU' class='button' target='_blank'>この動画をYouTubeで見る(href)</a></p>";
+            s+="<p><a href='#' class='button' target='_blank' id='btn' rel='xMLJf_YqRCU'>この動画をYouTubeで見る(on)</a></p>";
+            var infoWindowWidth=570; /* 情報ウィンドウの幅 */
+            var myOptions={
+                content:"<div class='infowin'>"+s+"</div>",
+                disableAutoPan: false,
+                maxWidth: 0,
+                pixelOffset: new google.maps.Size(-(infoWindowWidth/2), 100),
+                zIndex: null,
+                boxStyle: {
+                    background: "url('img/ajax/gmapv3/tipbox.gif') no-repeat center top",
+                    opacity: 0.95, /* 情報ウィンドウの透明度 */
+                    width:infoWindowWidth+"px"
+                },
+                closeBoxMargin: "5px 0 0 0",
+                closeBoxURL:"img/ajax/gmapv3/close.gif",
+                infoBoxClearance: new google.maps.Size(1,1),
+                isHidden: false,
+                pane: "floatPane",
+                enableEventPropagation: false
+            };
+            var infowindow=new InfoBox(myOptions);
+            infowindow.open(map, marker);
+
+            marker.set("id", 0);
+            infowindow.set("id", 0);
+            overlays.push([marker, infowindow]);
+            openFlag[0]=1;
+
+            /* マーカークリックで情報ウィンドウトグル */
+            google.maps.event.addListener(marker, 'click', function(e){
+                var id=this.get("id");
+                var infowindow=overlays[id][1];
+                if(openFlag[id]==0){
+                    infowindow.open(map, this);
+                    openFlag[id]=1;
+                }else{
+                    infowindow.close();
+                    openFlag[id]=0;
+                }
+            });
+            /* 閉じるボタンを押した時 */
+            google.maps.event.addListener(infowindow, 'closeclick', function() {
+                var id=this.get("id");
+                openFlag[id]=0;
+            });
+            $("#map_canvas").on("click", "a", function(event){
+                if($(this).attr("id")=="btn"){
+                    $(this).attr('href',"https://www.youtube.com/watch?v="+$(this).attr("rel"));
+                }else{
+                    return false;
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <h3>情報ウィンドウのカスタマイズ</h3>
+    <p>参照：<a href='http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/'>InfoBox: google-maps-utility-library-v3</a></p>
+    <p>素材：<a href='http://kage-design.com/wp/?p=687'>東京の新名所 東京スカイツリーのシルエット素材</a></p>
+    <p>InfoBoxで情報ウィンドウをカスタマイズしてみました。マーカークリックで、情報ウィンドウを開閉できます。情報ウィンドウ内にはYouTube動画を埋め込んでいます。</p>
+    <!-- 地図の埋め込み表示 -->
+    <div id="map_canvas"></div>
+</body>
+</html>

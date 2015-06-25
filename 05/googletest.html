@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<title>googleマップのマーカーに吹き出しをつける</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBaqJsOq4uaBAZ6gUbFi8rfIwbz4-iELiw"   ></script>
+<script type="text/javascript">
+function initialize() {
+  //var latlng = new google.maps.LatLng(37.4220, -122.08491731);
+
+  var myOptions = {
+      center: { lat: -10.397, lng: 150.644},
+      zoom: 8
+  };
+  var map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+
+
+  var marker01 = new google.maps.Marker({
+    position: new google.maps.LatLng(35.710139, 139.810833), /* マーカーを立てる場所の緯度・経度 */
+    map: map, /*マーカーを配置する地図オブジェクト */
+    title: 'Gakusei',
+    icon: '001.png'
+    //new google.maps.Size(31,31) // size
+  });
+  var iconcon = new google.maps.MarkerImage(
+      '002.jpg',
+    new google.maps.Size(32,33 ),
+    new google.maps.Point(0,0),
+    new google.maps.Point(37,34)
+  );
+  var marker02 = new google.maps.Marker({
+    position: new google.maps.LatLng(20.710139, 19.810833), /* マーカーを立てる場所の緯度・経度 */
+    map: map, /*マーカーを配置する地図オブジェクト */
+    title: 'satoshi',
+    icon:   iconcon
+        //new google.maps.Size(31,31) // size
+  });
+
+  google.maps.event.addListener(mapMarker, 'click', function() {
+    fukidashiwindow.open(map, mapMarker);
+  });
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+</head>
+
+<body>
+<div id="map_canvas"></div>
+
+</body>
+
+</html>
