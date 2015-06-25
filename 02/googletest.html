@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<title>googleマップのマーカーに吹き出しをつける｜YOSHIKIMINATOYA.COM</title>
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBaqJsOq4uaBAZ6gUbFi8rfIwbz4-iELiw"   ></script>
+<script>
+function initialize() {
+  var latlng = new google.maps.LatLng(37.4220, -122.08491731);
+  var myOptions = {
+    zoom: 17,
+    center: latlng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  var map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+
+  /* アイコン設定 */
+  var image = 'images/ico_map.png';
+  var mapMarker = new google.maps.Marker({
+    position: latlng,
+    map: map,
+    icon: image,
+    title: '吹き出し設置',
+  });
+
+  /* 吹き出し設定 */
+  var content = '<div id="fukidashiWindow">' +
+    '<h1>吹き出しタイトル</h1>' +
+    '<p>吹き出しの内容<br>' +
+    '住所など</p>' +
+    '</div>';
+  var fukidashiwindow = new google.maps.InfoWindow({
+    content: content
+  });
+
+
+  google.maps.event.addListener(mapMarker, 'click', function() {
+    fukidashiwindow.open(map, mapMarker);
+  });
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+<link rel="shortcut icon" type="image/x-icon" href="http://www.yoshikiminatoya.com/common/images/favi.ico" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-38326001-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body onload="initialize();">
+<div id="map_canvas"></div>
+
+    </body>
+
+</html>
